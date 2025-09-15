@@ -14,7 +14,7 @@ type FormData struct {
 }
 
 func (f *FormData) validate() error {
-	if f.Operator == "" || (f.Operator != "addition" && f.Operator != "subtraction" && f.Operator != "multiplication" && f.Operator != "division") {
+	if f.Operator == "" || (Operator(f.Operator) != OperatorAddition && Operator(f.Operator) != OperatorSubtraction && Operator(f.Operator) != OperatorMultiplication && Operator(f.Operator) != OperatorDivision) {
 		return fmt.Errorf("Invalid or missing operator")
 	}
 	if f.NumQuestions < 1 {

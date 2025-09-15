@@ -32,12 +32,7 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	}
 
 	// Operator symbol for display
-	opSymbol := map[string]string{
-		"addition":       "+",
-		"subtraction":    "-",
-		"multiplication": "×",
-		"division":       "÷",
-	}[form.Operator]
+	opSymbol := Operator(form.Operator).Symbol()
 
 	var sb strings.Builder
 	sb.WriteString("<html><head><style>@media print { .no-print { display:none } body{ margin:12mm } }</style></head><body><h1>Generated ")
