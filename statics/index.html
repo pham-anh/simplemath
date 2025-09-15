@@ -7,19 +7,44 @@
 </head>
 <body>
     <h1>Generate Math Questions</h1>
-    <form method="POST">
+    <form method="POST" action="/">
         <label>Operators:</label><br>
-        <input type="radio" name="operator" value="addition"> Addition<br>
+        <input type="radio" name="operator" value="addition" required> Addition<br>
         <input type="radio" name="operator" value="subtraction"> Subtraction<br>
         <input type="radio" name="operator" value="multiplication"> Multiplication<br>
         <input type="radio" name="operator" value="division"> Division<br><br>
         <label>Number of Questions:</label><br>
-        <input type="number" name="numQuestions" required><br>
+        <input type="number" name="numQuestions" min="1" required><br>
         <label>Number of Operands:</label><br>
-        <input type="number" name="numOperands" min="2" max="3" required><br>
+        <input type="number" id="numOperands" name="numOperands" min="2" max="3" value="2" required><br>
         <label>Number of Digits for Each Operand:</label><br>
-        <input type="number" name="numDigits" min="1" required><br>
+        <div id="digitsContainer"></div>
         <button type="submit">Generate</button>
     </form>
+    <script>
+    (function() {
+      const numOperandsInput = document.getElementById('numOperands');
+      const digitsContainer = document.getElementById('digitsContainer');
+      function renderDigitsInputs() {
+        const count = Math.min(3, Math.max(2, parseInt(numOperandsInput.value || '2', 10)));
+        digitsContainer.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+          const label = document.createElement('label');
+          label.textContent = 'Operand ' + i + ' digits:';
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.name = 'numDigits';
+          input.min = '1';
+          input.required = true;
+          input.style.marginLeft = '8px';
+          digitsContainer.appendChild(label);
+          digitsContainer.appendChild(input);
+          digitsContainer.appendChild(document.createElement('br'));
+        }
+      }
+      numOperandsInput.addEventListener('input', renderDigitsInputs);
+      renderDigitsInputs();
+    })();
+    </script>
 </body>
 </html>

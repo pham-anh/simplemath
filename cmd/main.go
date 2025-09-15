@@ -16,7 +16,7 @@ func main() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	h := handler.NewSubmitHandler(r)
 
-	e.POST("/submit", h.HandleSubmit)
+	e.POST("/", h.HandleSubmit)
 	e.GET("/", func(c echo.Context) error { return c.File("statics/index.html") })
 
 	if err := e.Start(":8080"); err != nil {

@@ -3,7 +3,6 @@ package handler
 import (
 	"math/rand"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"simplemath/pkg/internal/gen"
@@ -27,31 +26,9 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Unable to parse form")
 	}
 
-	operator := c.Request().FormValue("operator")
-	numQuestions, _ := strconv.Atoi(c.Request().FormValue("numQuestions"))
-	numOperands, _ := strconv.Atoi(c.Request().FormValue("numOperands"))
-
-	if numQuestions < 1 {
-		return c.String(http.StatusBadRequest, "Number of Questions must be at least 1")
-	}
-	if numOperands < 2 {
-		numOperands = 2
-	}
-	if numOperands > 3 {
-		numOperands = 3
-	}
-
-	rawDigits := c.Request().Form["numDigits"]
-	if len(rawDigits) != numOperands {
-		return c.String(http.StatusBadRequest, "Provide digits for each operand ("+strconv.Itoa(numOperands)+")")
-	}
-	digits := make([]int, numOperands)
-	for i, d := range rawDigits {
-		v, err := strconv.Atoi(d)
-		if err != nil || v < 1 {
-			return c.String(http.StatusBadRequest, "Digits must be >= 1")
-		}
-		digits[i] = v
+	form, err := FormDataFromRequest(c)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 
 	// Operator symbol for display
@@ -60,23 +37,20 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		"subtraction":    "-",
 		"multiplication": "×",
 		"division":       "÷",
-	}[operator]
-	if opSymbol == "" {
-		return c.String(http.StatusBadRequest, "Invalid or missing operator")
-	}
+	}[form.Operator]
 
 	var sb strings.Builder
-	sb.WriteString("<html><body><h1>Generated ")
+	sb.WriteString("<html><head><style>@media print { .no-print { display:none } body{ margin:12mm } }</style></head><body><h1>Generated ")
 	title := cases.Title(language.Und)
-	sb.WriteString(title.String(operator))
-	sb.WriteString(" Problems</h1><ul>")
+	sb.WriteString(title.String(form.Operator))
+	sb.WriteString(" Problems</h1><div class=\"no-print\"><button onclick=\"window.print()\">Print</button></div><ol>")
 
 	seen := make(map[string]bool)
-	count, attempts, maxAttempts := 0, 0, numQuestions*10
-	for count < numQuestions && attempts < maxAttempts {
-		ops := make([]int, numOperands)
-		for i := 0; i < numOperands; i++ {
-			ops[i] = gen.RandomWithDigits(h.rng, digits[i])
+	count, attempts, maxAttempts := 0, 0, form.NumQuestions*10
+	for count < form.NumQuestions && attempts < maxAttempts {
+		ops := make([]int, form.NumOperands)
+		for i := 0; i < form.NumOperands; i++ {
+			ops[i] = gen.RandomWithDigits(h.rng, form.Digits[i])
 		}
 		problem := gen.JoinOperands(ops, opSymbol)
 		if !seen[problem] {
@@ -89,6 +63,6 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		attempts++
 	}
 
-	sb.WriteString("</ul></body></html>")
+	sb.WriteString("</ol></body></html>")
 	return c.HTML(http.StatusOK, sb.String())
 }
