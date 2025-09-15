@@ -7,6 +7,9 @@
 </head>
 <body>
     <h1>Generate Math Questions</h1>
+    <div id="error" class="no-print" style="color:#b00020;margin:8px 0;">
+      
+    </div>
     <form method="POST" action="/">
         <label>Operators:</label><br>
         <input type="radio" name="operator" value="addition" required> Addition<br>
@@ -23,6 +26,18 @@
     </form>
     <script>
     (function() {
+      // Show validation error from flash cookie and clear it
+      const errorBox = document.getElementById('error');
+      const cookie = document.cookie.split('; ').find(r => r.startsWith('flash_error='));
+      if (cookie) {
+        const val = decodeURIComponent(cookie.split('=')[1] || '');
+        errorBox.textContent = val;
+        // Clear cookie
+        document.cookie = 'flash_error=; Max-Age=0; path=/';
+      } else {
+        errorBox.textContent = '';
+      }
+
       const numOperandsInput = document.getElementById('numOperands');
       const digitsContainer = document.getElementById('digitsContainer');
       function renderDigitsInputs() {

@@ -4,7 +4,7 @@ globs:
 alwaysApply: true
 ---
 
-# Repository AI instructions — simplemath
+# simplemath
 
 Purpose: provide the concrete, current facts needed to work effectively in this repo.
 

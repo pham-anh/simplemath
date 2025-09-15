@@ -2,6 +2,8 @@ package handler
 
 import (
 	"math/rand"
+	"net/http"
+	"net/url"
 	"strings"
 
 	"simplemath/gen"
@@ -21,7 +23,14 @@ func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: 
 func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	form, err := FormDataFromRequest(c)
 	if err != nil {
-		return c.String(400, err.Error())
+		c.SetCookie(&http.Cookie{
+			Name:     "flash_error",
+			Value:    url.QueryEscape(err.Error()),
+			Path:     "/",
+			MaxAge:   5,
+			HttpOnly: false,
+		})
+		return c.Redirect(303, "/")
 	}
 
 	sym := operator.Operator(form.Operator).Symbol()
