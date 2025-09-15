@@ -1,4 +1,4 @@
-package generateutil
+package gen
 
 import (
 	"math/rand"

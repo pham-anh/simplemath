@@ -6,34 +6,18 @@ import (
 	"strconv"
 	"strings"
 
-	"simplemath/pkg/add"
-	"simplemath/pkg/div"
-	"simplemath/pkg/mul"
-	"simplemath/pkg/sub"
+	"simplemath/pkg/internal/gen"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
-type Generator interface {
-	Generate(r *rand.Rand, digits []int) string
-}
-
 type SubmitHandler struct {
-	rng  *rand.Rand
-	gens map[string]Generator
+	rng *rand.Rand
 }
 
-func NewSubmitHandler(r *rand.Rand) *SubmitHandler {
-	return &SubmitHandler{
-		rng: r,
-		gens: map[string]Generator{
-			"addition":       add.Generator{},
-			"subtraction":    sub.Generator{},
-			"multiplication": mul.Generator{},
-			"division":       div.Generator{},
-		},
-	}
-}
+func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
 
 func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	if c.Request().Method != http.MethodPost {
@@ -70,20 +54,31 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		digits[i] = v
 	}
 
-	gen, ok := h.gens[operator]
-	if !ok {
+	// Operator symbol for display
+	opSymbol := map[string]string{
+		"addition":       "+",
+		"subtraction":    "-",
+		"multiplication": "×",
+		"division":       "÷",
+	}[operator]
+	if opSymbol == "" {
 		return c.String(http.StatusBadRequest, "Invalid or missing operator")
 	}
 
 	var sb strings.Builder
 	sb.WriteString("<html><body><h1>Generated ")
-	sb.WriteString(strings.Title(operator))
+	title := cases.Title(language.Und)
+	sb.WriteString(title.String(operator))
 	sb.WriteString(" Problems</h1><ul>")
 
 	seen := make(map[string]bool)
 	count, attempts, maxAttempts := 0, 0, numQuestions*10
 	for count < numQuestions && attempts < maxAttempts {
-		problem := gen.Generate(h.rng, digits)
+		ops := make([]int, numOperands)
+		for i := 0; i < numOperands; i++ {
+			ops[i] = gen.RandomWithDigits(h.rng, digits[i])
+		}
+		problem := gen.JoinOperands(ops, opSymbol)
 		if !seen[problem] {
 			seen[problem] = true
 			sb.WriteString("<li>")
@@ -97,5 +92,3 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	sb.WriteString("</ul></body></html>")
 	return c.HTML(http.StatusOK, sb.String())
 }
-
-
