@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addition Operator</title>
+</head>
+<body>
+    <h1>Generate Math Questions</h1>
+    <form method="POST">
+        <label>Operators:</label><br>
+        <input type="radio" name="operator" value="addition"> Addition<br>
+        <input type="radio" name="operator" value="subtraction"> Subtraction<br>
+        <input type="radio" name="operator" value="multiplication"> Multiplication<br>
+        <input type="radio" name="operator" value="division"> Division<br><br>
+        <label>Number of Questions:</label><br>
+        <input type="number" name="numQuestions" required><br>
+        <label>Number of Operands:</label><br>
+        <input type="number" name="numOperands" min="2" max="3" required><br>
+        <label>Number of Digits for Each Operand:</label><br>
+        <input type="number" name="numDigits" min="1" required><br>
+        <button type="submit">Generate</button>
+    </form>
+</body>
+</html>
