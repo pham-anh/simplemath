@@ -1,0 +1,49 @@
+/* Print styles for simplemath (A4-friendly) */
+
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
+/* Default screen tweaks */
+@media screen {
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+}
+
+/* Print-specific */
+@media print {
+  .no-print { display: none !important; }
+
+  body {
+    color: #000;
+    background: #fff;
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.25;
+    font-size: 12pt;
+  }
+
+  h1 {
+    font-size: 18pt;
+    margin: 0 0 8mm 0;
+    text-align: left;
+  }
+
+  ol {
+    column-count: 2;
+    column-gap: 12mm;
+    margin: 0;
+    padding-left: 6mm;
+  }
+
+  li {
+    break-inside: avoid;
+    margin: 0 0 3mm 0;
+  }
+
+  .page-break { page-break-after: always; }
+}
+
+
