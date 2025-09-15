@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"simplemath/pkg/handler"
+	"simplemath/handler"
 
 	"github.com/labstack/echo/v4"
 )
