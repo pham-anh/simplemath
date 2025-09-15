@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -25,41 +26,118 @@ func handleFormSubmission(c echo.Context) error {
 			return c.String(http.StatusBadRequest, "Unable to parse form")
 		}
 
-		// Create an instance of FormData
+		// Parse inputs
+		operator := c.Request().FormValue("operator")
 		numQuestions, _ := strconv.Atoi(c.Request().FormValue("numQuestions"))
 		numOperands, _ := strconv.Atoi(c.Request().FormValue("numOperands"))
 
-		// Generate a response to display the problems
-		response := "<html><body><h1>Generated Addition Problems</h1><ul>"
-
-		for i := 0; i < numQuestions; i++ {
-			// Generate a random addition problem
-			operands := make([]int, numOperands)
-			for j := 0; j < numOperands; j++ {
-				operands[j] = rand.Intn(100) // Example: random number between 0 and 99
+		// Collect numDigits (multiple inputs with same name)
+		rawDigits := c.Request().Form["numDigits"]
+		digits := make([]int, 0, len(rawDigits))
+		for _, d := range rawDigits {
+			if d == "" {
+				continue
 			}
-
-			// Create the addition problem string
-			problem := ""
-			for j, operand := range operands {
-				if j > 0 {
-					problem += " + "
-				}
-				problem += strconv.Itoa(operand)
+			v, convErr := strconv.Atoi(d)
+			if convErr != nil {
+				return c.String(http.StatusBadRequest, "Invalid numDigits value")
 			}
-
-			// Add the problem to the response
-			response += "<li>" + problem + "</li>"
+			digits = append(digits, v)
 		}
 
-		// End the HTML response
-		response += "</ul></body></html>"
+		// Validate inputs
+		if operator == "" || (operator != "addition" && operator != "subtraction" && operator != "multiplication" && operator != "division") {
+			return c.String(http.StatusBadRequest, "Invalid or missing operator")
+		}
+		if numQuestions < 1 {
+			return c.String(http.StatusBadRequest, "Number of Questions must be at least 1")
+		}
+		if numOperands < 2 {
+			numOperands = 2
+		}
+		if numOperands > 3 {
+			numOperands = 3
+		}
+		if len(digits) != numOperands {
+			return c.String(http.StatusBadRequest, "Provide digits for each operand ("+strconv.Itoa(numOperands)+")")
+		}
+		for _, d := range digits {
+			if d < 1 {
+				return c.String(http.StatusBadRequest, "Digits must be >= 1")
+			}
+		}
 
-		// Return the response
-		return c.HTML(http.StatusOK, response)
+		// Operator symbol for display
+		opSymbol := map[string]string{
+			"addition":       "+",
+			"subtraction":    "-",
+			"multiplication": "×",
+			"division":       "÷",
+		}[operator]
+
+		// Build response with deduplication
+		var sb strings.Builder
+		sb.WriteString("<html><body>")
+		sb.WriteString("<h1>Generated ")
+		sb.WriteString(strings.Title(operator))
+		sb.WriteString(" Problems</h1><ul>")
+
+		generatedProblems := make(map[string]bool)
+		problemCount := 0
+		maxAttempts := numQuestions * 10
+		attempts := 0
+
+		for problemCount < numQuestions && attempts < maxAttempts {
+			operands := make([]int, numOperands)
+			for j := 0; j < numOperands; j++ {
+				operands[j] = randomWithDigits(digits[j])
+			}
+			problem := joinOperands(operands, opSymbol)
+			if !generatedProblems[problem] {
+				generatedProblems[problem] = true
+				sb.WriteString("<li>")
+				sb.WriteString(problem)
+				sb.WriteString("</li>")
+				problemCount++
+			}
+			attempts++
+		}
+
+		sb.WriteString("</ul></body></html>")
+		return c.HTML(http.StatusOK, sb.String())
 	}
 
 	return nil
+}
+
+func powerOfTen(exp int) int {
+	result := 1
+	for range exp {
+		result *= 10
+	}
+	return result
+}
+
+func randomWithDigits(d int) int {
+	if d <= 1 {
+		return rand.Intn(9) + 1
+	}
+	min := powerOfTen(d - 1)
+	span := powerOfTen(d) - min
+	return min + rand.Intn(span)
+}
+
+func joinOperands(operands []int, symbol string) string {
+	var b strings.Builder
+	for idx, v := range operands {
+		if idx > 0 {
+			b.WriteString(" ")
+			b.WriteString(symbol)
+			b.WriteString(" ")
+		}
+		b.WriteString(strconv.Itoa(v))
+	}
+	return b.String()
 }
 
 func main() {
