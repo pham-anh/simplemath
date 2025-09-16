@@ -4,18 +4,27 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"strings"
+	"text/template"
+	"time"
 
 	"simplemath/gen"
 	"simplemath/operator"
 
 	"github.com/labstack/echo/v4"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
+
+type Item struct {
+	Emoji string
+	Text  string
+}
 
 type SubmitHandler struct {
 	rng *rand.Rand
+}
+
+type Result struct {
+	Operator string
+	Items    []Item
 }
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
@@ -34,14 +43,10 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	}
 
 	sym := operator.Operator(form.Operator).Symbol()
-	var sb strings.Builder
-	sb.WriteString("<html><head><style>@media print { .no-print { display:none } body{ margin:12mm } }</style></head><body><h1>Generated ")
-	title := cases.Title(language.Und)
-	sb.WriteString(title.String(form.Operator))
-	sb.WriteString(" Problems</h1><div class=\"no-print\"><button onclick=\"window.print()\">Print</button></div><ul>")
-
 	seen := map[string]bool{}
 	count, attempts, maxAttempts := 0, 0, form.NumQuestions*10
+
+	var items []Item
 	for count < form.NumQuestions && attempts < maxAttempts {
 		ops := make([]int, form.NumOperands)
 		for i := 0; i < form.NumOperands; i++ {
@@ -50,16 +55,87 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		problem := gen.JoinOperands(ops, sym)
 		if !seen[problem] {
 			seen[problem] = true
-			sb.WriteString("<li>")
-			sb.WriteString(problem)
-			sb.WriteString("</li>")
+			items = append(items, Item{
+				Emoji: getRandomEmoji(),
+				Text:  problem,
+			})
 			count++
 		}
 		attempts++
 	}
 
-	sb.WriteString("</ul></body></html>")
-	return c.HTML(200, sb.String())
+	// Load and execute the template.
+	tpl, err := template.ParseFiles("statics/result.html")
+	if err != nil {
+		return err
+	}
+	_ = tpl.Execute(c.Response().Writer, Result{
+		Operator: form.Operator,
+		Items:    items,
+	})
+	return nil
 }
 
+// Get a random emoji from the emojis slice.
+func getRandomEmoji() string {
+	// Seed the random number generator
+	rand.Seed(time.Now().UnixNano())
+	// Select a random index
+	randomIndex := rand.Intn(len(emojis))
+	// Return the emoji at the random index
+	return emojis[randomIndex]
+}
 
+// Large slice of emojis covering the requested categories.
+var emojis = []string{
+	// Animals & Nature
+	"🐵", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐩", "🐺", "🦊",
+	"🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴", "🐎", "🦌",
+	"🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑",
+	"🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭",
+	"🐁", "🐀", "🐹", "🐰", "🐇", "🐿️", "🦫", "🦡", "🦔", "🦦",
+	"🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🐾", "🦃", "🐔", "🐓",
+	"🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", "🦢", "🦉",
+	"🦤", "🦩", "🦜", "🐸", "🐊", "🐢", "🦎", "🐍", "🐲", "🐉",
+	"🦕", "🦖", "🐳", "🐋", "🐬", "🦭", "🐠", "🐟", "🐡", "🦈",
+	"🐙", "🐚", "🐌", "🦋", "🐛", "🐜", "🐝", "🪲", "🐞", "🦗",
+	"🪳", "🕷️", "🕸️", "🦂", "🦟", "🪰", "🪱", "🦠", "💐", "🌸",
+	"💮", "🪷", "🪻", "🌷", "🌹", "🥀", "🌺", "🌻", "🌼", "🍂",
+	"🍁", "🌾", "🌿", "🌱", "🌲", "🌳", "🌴", "🌵", "🪴", "🪹",
+	"🪺", "🌰", "🍄", "🌎", "🌍", "🌏", "🌑", "🌒", "🌓", "🌔",
+	"🌕", "🌖", "🌗", "🌘", "🌙", "🌚", "🌛", "🌜", "🌝", "🌞",
+	"🌟", "🌠", "🌌", "☄️", "🪐", "☀️", "🌡️", "🌤️", "🌥️", "🌦️",
+	"☁️", "🌧️", "⛈️", "🌩️", "⚡", "🔥", "💥", "❄️", "🌨️", "☃️",
+	"⛄", "🌬️", "💨", "🌪️", "🌫️", "🌈", "☂️", "☔", "💧", "🌊",
+	"🪨", "🪵", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏞️", "🛣️", "🛤️",
+	"🌅", "🌄", "🏙️", "🌉", "🌃", "🌆", "🌇",
+
+	// Food & Drink
+	"🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏",
+	"🍐", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑",
+	"🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄",
+	"🧅", "🥜", "🌰", "🫚", "🫛", "🫘", "🍞", "🥐", "🥖", "🫓",
+	"🥨", "🧀", "🥚", "🍳", "🧈", "🥓", "🥩", "🍗", "🍖", "🦴",
+	"🌭", "🍔", "🍟", "🍕", "🫔", "🥪", "🫕", "🥙", "🧆", "🌮",
+	"🌯", "🫙", "🫛", "🍝", "🍜", "🍲", "🍛", "🍣", "🍱", "🥟",
+	"🦪", "🍚", "🍘", "🍙", "🍢", "🍡", "🍧", "🍡", "🍨", "🍦",
+	"🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮",
+	"🍯", "🍶", "🍼", "🥛", "☕", "🍵", "🫖", "🧋", "🍾", "🍷",
+	"🍸", "🍹", "🍻", "🥂", "🥃", "🫗", "🥤", "🧊", "🥄", "🍴",
+	"🍽️", "🔪", "🥢", "🧂",
+
+	// Travel & Places
+	"🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐",
+	"🛻", "🚚", "🚛", "🚜", "🛵", "🏍️", "🛺", "🚲", "🛴", "🦼",
+	"🦽", "🩼", "🛞", "🚨", "🚔", "🚍", "🚖", "🚡", "🚠", "🚟",
+	"🚃", "🚄", "🚅", "🚂", "🚆", "🚇", "🚈", "🚝", "🚟", "🛗",
+	"✈️", "🛫", "🛬", "🚁", "🚀", "🛸", "🛶", "⛵", "🚤", "🛥️",
+	"🛳️", "⛴️", "🚢", "⚓", "🚧", "🚦", "🚥", "⛽", "🚏", "🗺️",
+	"🗾", "🧭", "💒", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "🏰",
+	"🏯", "🏟️", "🗼", "🗽", "🏠", "🏡", "🏘️", "🛖", "🏚️", "🏢",
+	"🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏭", "🏯",
+	"🏯", "🏰", "🗼", "🗽", "🏠", "🏡", "🏘️", "🏚️", "🏢", "🏣",
+	"🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏭", "🏯", "🏯",
+	"🌃", "🌆", "🌇", "🌉", "🛕", "🕍", "⛩️", "🕋", "🏛️", "🛖",
+	"🏞️", "🛣️", "🛤️", "🌅", "🌄", "🏙️", "🌉", "🌃", "🌆", "🌇",
+}
