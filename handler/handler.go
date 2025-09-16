@@ -38,7 +38,7 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	sb.WriteString("<html><head><style>@media print { .no-print { display:none } body{ margin:12mm } }</style></head><body><h1>Generated ")
 	title := cases.Title(language.Und)
 	sb.WriteString(title.String(form.Operator))
-	sb.WriteString(" Problems</h1><div class=\"no-print\"><button onclick=\"window.print()\">Print</button></div><ol>")
+	sb.WriteString(" Problems</h1><div class=\"no-print\"><button onclick=\"window.print()\">Print</button></div><ul>")
 
 	seen := map[string]bool{}
 	count, attempts, maxAttempts := 0, 0, form.NumQuestions*10
@@ -58,7 +58,7 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		attempts++
 	}
 
-	sb.WriteString("</ol></body></html>")
+	sb.WriteString("</ul></body></html>")
 	return c.HTML(200, sb.String())
 }
 

@@ -33,7 +33,7 @@ func JoinOperands(operands []int, symbol string) string {
         }
         b.WriteString(strconv.Itoa(v))
     }
-    return b.String()
+    return b.String() + " = "
 }
 
 
