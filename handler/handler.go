@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"text/template"
-	"time"
 
 	"simplemath/gen"
 	"simplemath/operator"
@@ -78,8 +77,6 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 
 // Get a random emoji from the emojis slice.
 func getRandomEmoji() string {
-	// Seed the random number generator
-	rand.Seed(time.Now().UnixNano())
 	// Select a random index
 	randomIndex := rand.Intn(len(emojis))
 	// Return the emoji at the random index
