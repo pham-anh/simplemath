@@ -67,3 +67,14 @@ Known gaps / next steps
 - Add operator-specific rules as needed (e.g., subtraction non-negative, division constraints).
 - Add print-specific CSS in `statics/print.css` to refine client-side print.
 - Optional: CLI/env to fix RNG seed during development/tests.
+- 
+
+## Style Guidelines:
+
+- Primary color: Light blue (#ADD8E6), reminiscent of sky, to imply hosting, approachable and reliable.
+- Background color: Very light gray (#F5F5F5) to provide a clean, unobtrusive backdrop.
+- Accent color: Soft orange (#FFB347), an analogous color for the button
+- Body and headline font: 'PT Sans' (sans-serif) for a clean, modern, accessible aesthetic in both headers and body text.
+- Use simple, line-based icons to represent different Firebase Hosting functionalities.
+- Maintain a clean, single-column layout with ample whitespace for easy readability and navigation.
+- Use subtle animations, like fade-ins and transitions, to enhance the user experience without being distracting.
