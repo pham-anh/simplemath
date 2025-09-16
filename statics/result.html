@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generated {{.Operator}} Problems</title>
+    <title>Generated addition Problems</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,22 +18,27 @@
             font-size: 2.0em;
         }
 
-        ul {
-            list-style: none;
-            padding-left: 0;
+        /* The container for the two-column layout */
+        .problem-columns {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
 
+        /* The list items are now the direct flex items */
         li {
+            list-style: none; /* Remove list bullet */
             margin-bottom: 25px;
-            /* font-size: 1em; */
+            font-size: 1em;
             display: flex;
             align-items: center;
+            width: calc(50% - 20px); /* 50% width for two columns, with a gap */
         }
-
+        
         .emoji-bullet {
             display: inline-block;
             margin-right: 15px;
-            font-size: 1.2em;
+            font-size: 2.0em;
         }
 
         .problem-text {
@@ -41,18 +46,18 @@
             margin-right: 10px;
         }
         
-        /* Style for the answer line */
         .answer-line {
             display: inline-block;
             width: 160px;
             height: 2px;
             background-color: #A0A0A0;
-            vertical-align: middle;
             margin-left: 5px;
             margin-top: 12px;
+            height: 2px; /* This is now optional but can help with vertical spacing */
+            border-bottom: 2px solid #A0A0A0; /* Use a border instead of background-color */
+            background-color: transparent; /* Ensure no background color interferes */
         }
-
-        /* Style for the Print button */
+        
         .print-button {
             padding: 10px 20px;
             font-size: 1.0em;
@@ -64,7 +69,6 @@
             font-family: 'Chewy', sans-serif;
         }
         
-        /* Hide print button when printing */
         @media print {
             .print-button {
                 display: none;
@@ -73,9 +77,9 @@
     </style>
 </head>
 <body>
-    <h2>Generated {{.Operator}} Problems</h2>
+    <h2>Generated addition Problems</h2>
     <button class="print-button" onclick="window.print()">Print</button>
-    <ul>
+    <div class="problem-columns">
         {{range .Items}}
         <li>
             <span class="emoji-bullet">{{.Emoji}}</span>
@@ -83,6 +87,6 @@
             <span class="answer-line"></span>
         </li>
         {{end}}
-    </ul>
+    </div>
 </body>
 </html>
