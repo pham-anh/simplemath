@@ -7,6 +7,7 @@ import (
 	"simplemath/handler"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -16,7 +17,16 @@ func main() {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	h := handler.NewSubmitHandler(r)
 
-	e.POST("/", h.HandleSubmit)
+	// Apply the rate limiter middleware to the POST endpoint.
+	// We'll limit it to 1 request per second from each IP address.
+	e.POST("/", h.HandleSubmit, middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
+		Store: middleware.NewRateLimiterMemoryStoreWithConfig(middleware.RateLimiterMemoryStoreConfig{
+			Rate:      1,
+			Burst:     1,
+			ExpiresIn: 10 * time.Second,
+		}),
+	}))
+
 	e.GET("/", func(c echo.Context) error { return c.File("statics/index.html") })
 	e.File("/favicon.png", "statics/favicon.png")
 
