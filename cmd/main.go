@@ -22,9 +22,9 @@ func main() {
 	// We'll limit it to 1 request per second from each IP address.
 	ratelimit := middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(middleware.RateLimiterMemoryStoreConfig{
-			Rate:      1,
-			Burst:     1,
-			ExpiresIn: 30 * time.Second,
+			Rate:      60,              // 60 requests
+			Burst:     5,               // with a burst of 5
+			ExpiresIn: 1 * time.Minute, // per minute
 		}),
 	})
 
