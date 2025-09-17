@@ -178,7 +178,8 @@
       const cookie = document.cookie.split('; ').find(r => r.startsWith('flash_error='));
       if (cookie) {
         const val = decodeURIComponent(cookie.split('=')[1] || '');
-        errorBox.textContent = val;
+
+        errorBox.textContent = val.replace(/\+/g, ' ');
         // Clear cookie
         document.cookie = 'flash_error=; Max-Age=0; path=/';
       } else {
@@ -199,6 +200,7 @@
           input.type = 'number';
           input.name = 'numDigits';
           input.min = '1';
+          input.max = '3';
           input.required = true;
           input.style.marginLeft = '8px';
           digitsContainer.appendChild(label);
