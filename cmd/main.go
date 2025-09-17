@@ -18,6 +18,7 @@ func main() {
 
 	e.POST("/", h.HandleSubmit)
 	e.GET("/", func(c echo.Context) error { return c.File("statics/index.html") })
+	e.File("/favicon.png", "statics/favicon.png")
 
 	if err := e.Start(":8080"); err != nil {
 		e.Logger.Fatal(err)

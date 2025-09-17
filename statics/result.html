@@ -1,21 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Generated addition Problems</title>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Đã Tạo</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Chewy&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #ff6f61;
+            --secondary-color: #61d4ff;
+            --background-color: #f7f9fc;
+            --text-color: #333;
+        }
+
         body {
-            font-family: 'Bubblegum Sans', sans-serif;
-            font-size: 1.5rem;
-            margin: 20px;
+            font-family: 'ABeeZee', sans-serif;
+            background: linear-gradient(135deg, var(--background-color), #e0f0ff);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
         }
 
         h2 {
-            font-size: 2.0em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .problem-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .button-group {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         /* The container for the two-column layout */
@@ -29,7 +59,7 @@
         li {
             list-style: none; /* Remove list bullet */
             margin-bottom: 25px;
-            font-size: 1em;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             width: calc(50% - 20px); /* 50% width for two columns, with a gap */
@@ -53,40 +83,76 @@
             background-color: #A0A0A0;
             margin-left: 5px;
             margin-top: 12px;
-            height: 2px; /* This is now optional but can help with vertical spacing */
-            border-bottom: 2px solid #A0A0A0; /* Use a border instead of background-color */
-            background-color: transparent; /* Ensure no background color interferes */
+            height: 2px;
+            border-bottom: 2px solid #A0A0A0;
+            background-color: transparent;
         }
         
-        .print-button {
-            padding: 10px 20px;
-            font-size: 1.0em;
+        .action-button {
+            padding: 15px 30px;
+            font-size: 1.5em;
             cursor: pointer;
-            margin-bottom: 30px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            font-family: 'Chewy', sans-serif;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none; /* For the back button link */
+            display: inline-block;
+            margin: 0 5px; /* Add some space between buttons */
+        }
+
+        .action-button.print {
+            background-color: var(--primary-color);
+        }
+
+        .action-button.back {
+            background-color: var(--secondary-color);
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
         
         @media print {
-            .print-button {
+            .action-button {
                 display: none;
+            }
+
+            body {
+                background: none;
+            }
+
+            h2, li, .emoji-bullet, .problem-text {
+                color: #000;
+                text-shadow: none;
+            }
+
+            .problem-container {
+                box-shadow: none;
             }
         }
     </style>
 </head>
 <body>
-    <h2>Generated addition Problems</h2>
-    <button class="print-button" onclick="window.print()">Print</button>
-    <div class="problem-columns">
-        {{range .Items}}
-        <li>
-            <span class="emoji-bullet">{{.Emoji}}</span>
-            <span class="problem-text">{{.Text}}</span>
-            <span class="answer-line"></span>
-        </li>
-        {{end}}
+    <h2>Bài Tập Cộng</h2>
+    <div class="button-group">
+        <a href="/" class="action-button back">Quay Lại</a>
+        <button class="action-button print" onclick="window.print()">In</button>
+    </div>
+    <div class="problem-container">
+        <div class="problem-columns">
+            {{range .Items}}
+            <li>
+                <span class="emoji-bullet">{{.Emoji}}</span>
+                <span class="problem-text">{{.Text}}</span>
+                <span class="answer-line"></span>
+            </li>
+            {{end}}
+        </div>
     </div>
 </body>
 </html>
