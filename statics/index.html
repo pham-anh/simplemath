@@ -1,29 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Addition Operator</title>
+    <title>Bài Tập Toán</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6f61;
+            --secondary-color: #61d4ff;
+            --background-color: #f7f9fc;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'ABeeZee', sans-serif;
+            background: linear-gradient(135deg, var(--background-color), #e0f0ff);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        #error {
+            color: #b00020;
+            margin: 8px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+        
+        .radio-label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary-color);
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            margin-right: 8px;
+        }
+
+        input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        input[type="number"],
+        #digitsContainer input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-color);
+            outline: none;
+            font-family: 'ABeeZee', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        #digitsContainer input:focus {
+            border-color: var(--primary-color);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #digitsContainer {
+            margin-top: 10px;
+        }
+
+        #digitsContainer label {
+            display: inline-block;
+            margin-top: 0;
+            width: 120px; /* Adjusted width for Vietnamese text */
+        }
+
+        #digitsContainer input {
+            width: 50px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Generate Math Questions</h1>
-    <div id="error" class="no-print" style="color:#b00020;margin:8px 0;">
-      
+    <h1>Tạo Bài Tập Toán</h1>
+    <div class="container">
+        <div id="error" class="no-print"></div>
+        <form method="POST" action="/">
+            <label>Chọn Phép Toán:</label><br>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <label class="radio-label">
+                    <input type="radio" name="operator" value="addition" checked> Phép Cộng
+                </label>
+                </div>
+            
+            <label for="numQuestions">Số Lượng Câu:</label>
+            <input type="number" id="numQuestions" name="numQuestions" min="10" max="20" step="10" value="10" required>
+            
+            <label for="numOperands">Số Lượng Số Hạng:</label>
+            <input type="number" id="numOperands" name="numOperands" min="2" max="3" value="2" required>
+            
+            <label>Số Chữ Số Cho Mỗi Số Hạng:</label>
+            <div id="digitsContainer"></div>
+            <br>
+            <button type="submit">Tạo Bài Tập!</button>
+        </form>
     </div>
-    <form method="POST" action="/">
-        <label>Operators:</label><br>
-        <input type="radio" name="operator" value="addition" required> Addition<br>
-        <input type="radio" name="operator" value="subtraction"> Subtraction<br>
-        <input type="radio" name="operator" value="multiplication"> Multiplication<br>
-        <input type="radio" name="operator" value="division"> Division<br><br>
-        <label>Number of Questions:</label><br>
-        <input type="number" name="numQuestions" min="1" required><br>
-        <label>Number of Operands:</label><br>
-        <input type="number" id="numOperands" name="numOperands" min="2" max="3" value="2" required><br>
-        <label>Number of Digits for Each Operand:</label><br>
-        <div id="digitsContainer"></div>
-        <button type="submit">Generate</button>
-    </form>
     <script>
     (function() {
       // Show validation error from flash cookie and clear it
@@ -45,7 +197,9 @@
         digitsContainer.innerHTML = '';
         for (let i = 1; i <= count; i++) {
           const label = document.createElement('label');
-          label.textContent = 'Operand ' + i + ' digits:';
+          label.textContent = 'Số Hạng ' + i + ':';
+          label.style.display = 'inline-block';
+          label.style.width = '120px';
           const input = document.createElement('input');
           input.type = 'number';
           input.name = 'numDigits';
