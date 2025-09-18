@@ -116,6 +116,25 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
+
+        /* --- New responsive CSS --- */
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            .problem-container {
+                padding: 10px;
+            }
+
+            .problem-columns {
+                flex-direction: column;
+            }
+
+            li {
+                width: 100%; /* Change to a single column */
+            }
+        }
         
         @media print {
             .action-button {
