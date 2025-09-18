@@ -13,6 +13,7 @@ import (
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
+	e.Use(middleware.Secure())
 
 	// Seeded RNG for generation (inject into handler)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -22,7 +23,7 @@ func main() {
 	// We'll limit it to 1 request per second from each IP address.
 	ratelimit := middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(middleware.RateLimiterMemoryStoreConfig{
-			Rate:      60,              // 60 requests
+			Rate:      30,              // 60 requests
 			Burst:     5,               // with a burst of 5
 			ExpiresIn: 1 * time.Minute, // per minute
 		}),
