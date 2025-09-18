@@ -90,9 +90,8 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        input[type="number"],
-        #digitsContainer input {
-            width: calc(100% - 20px);
+        select {
+            width: 100%;
             padding: 10px;
             margin-top: 5px;
             border-radius: 8px;
@@ -104,9 +103,12 @@
             transition: border-color 0.3s;
         }
 
-        input[type="number"]:focus,
-        #digitsContainer input:focus {
+        select:focus {
             border-color: var(--primary-color);
+        }
+
+        #digitsContainer select {
+            width: 60px;
         }
 
         button[type="submit"] {
@@ -139,10 +141,6 @@
             margin-top: 0;
             width: 120px;
         }
-
-        #digitsContainer input {
-            width: 50px;
-        }
     </style>
 </head>
 <body>
@@ -153,17 +151,20 @@
             <label>Chọn Phép Toán:</label>
             <div class="tab-container">
                 <div class="tab active" data-value="addition">Phép Cộng</div>
-                <!-- <div class="tab" data-value="subtraction">Phép Trừ</div>
-                <div class="tab" data-value="multiplication">Phép Nhân</div>
-                <div class="tab" data-value="division">Phép Chia</div> -->
             </div>
             <input type="hidden" name="operator" id="operatorInput" value="addition">
             
             <label for="numQuestions">Số Lượng Câu:</label>
-            <input type="number" id="numQuestions" name="numQuestions" min="10" max="20" step="10" value="10" required>
+            <select id="numQuestions" name="numQuestions">
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
             
             <label for="numOperands">Số Lượng Số Hạng:</label>
-            <input type="number" id="numOperands" name="numOperands" min="2" max="3" value="2" required>
+            <select id="numOperands" name="numOperands">
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
             
             <label>Số Chữ Số Cho Mỗi Số Hạng:</label>
             <div id="digitsContainer"></div>
@@ -186,30 +187,32 @@
         errorBox.textContent = '';
       }
 
-      const numOperandsInput = document.getElementById('numOperands');
+      const numOperandsSelect = document.getElementById('numOperands');
       const digitsContainer = document.getElementById('digitsContainer');
-      function renderDigitsInputs() {
-        const count = Math.min(3, Math.max(2, parseInt(numOperandsInput.value || '2', 10)));
+      function renderDigitsSelects() {
+        const count = parseInt(numOperandsSelect.value || '2', 10);
         digitsContainer.innerHTML = '';
         for (let i = 1; i <= count; i++) {
           const label = document.createElement('label');
           label.textContent = 'Số Hạng ' + i + ':';
           label.style.display = 'inline-block';
           label.style.width = '120px';
-          const input = document.createElement('input');
-          input.type = 'number';
-          input.name = 'numDigits';
-          input.min = '1';
-          input.max = '3';
-          input.required = true;
-          input.style.marginLeft = '8px';
+          const select = document.createElement('select');
+          select.name = 'numDigits';
+          for (let j = 1; j <= 3; j++) {
+            const option = document.createElement('option');
+            option.value = j;
+            option.textContent = j;
+            select.appendChild(option);
+          }
+          select.style.marginLeft = '8px';
           digitsContainer.appendChild(label);
-          digitsContainer.appendChild(input);
+          digitsContainer.appendChild(select);
           digitsContainer.appendChild(document.createElement('br'));
         }
       }
-      numOperandsInput.addEventListener('input', renderDigitsInputs);
-      renderDigitsInputs();
+      numOperandsSelect.addEventListener('change', renderDigitsSelects);
+      renderDigitsSelects();
 
       // New JavaScript for tab functionality
       const tabs = document.querySelectorAll('.tab');
