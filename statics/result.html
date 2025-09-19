@@ -50,23 +50,19 @@
             margin-bottom: 20px;
         }
 
-        /* The container for the two-column layout */
         .problem-columns {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
         }
 
-        /* The list items are now the direct flex items */
         li {
             list-style: none;
-            /* Remove list bullet */
             margin-bottom: 25px;
             font-size: 1.5rem;
             display: flex;
             align-items: center;
             width: calc(50% - 20px);
-            /* 50% width for two columns, with a gap */
         }
 
         .show-on-print {
@@ -108,16 +104,12 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, box-shadow 0.2s;
             text-decoration: none;
-            /* For the back button link */
             display: inline-block;
             margin: 0 5px;
-            /* Add some space between buttons */
         }
 
-        /* Updated colors */
         .action-button.back {
             background-color: #BDBDBD;
-            /* A light grey for the back button */
         }
 
         .action-button.print {
@@ -131,6 +123,15 @@
         .action-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .page-container {
+            margin: 30px auto;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
         @media (max-width: 600px) {
@@ -148,20 +149,29 @@
 
             li {
                 width: 100%;
-                /* Change to a single column */
             }
         }
 
         @media print {
-
             .action-button,
-            h3,
-            h2 {
+            .no-print {
                 display: none;
             }
 
             body {
                 background: none;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .page-container + .page-container {
+                page-break-before: always;
             }
 
             li,
@@ -171,29 +181,30 @@
                 text-shadow: none;
             }
 
-            .problem-container {
-                box-shadow: none;
-            }
-
             .show-on-print {
                 display: block;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 700;
+                font-size: 2.5rem;
+                color: #000;
+                text-align: center;
+                margin-bottom: 20px;
+                text-shadow: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <h2>Bài Tập Cộng</h2>
-    <div class="button-group">
+    <h2 class="no-print">Bài Tập Cộng</h2>
+    <div class="button-group no-print">
         <a href="/" class="action-button back">Quay Lại</a>
         <a href="javascript:location.reload();" class="action-button generate-new">Tạo Bài Tập Mới</a>
         <button class="action-button print" onclick="window.print()">In</button>
     </div>
-    {{if .TwoSided}}
-    <h2 class="show-on-print">Bài Tập Cộng</h2>
 
-    {{end}}
-    <div class="problem-container">
+    <div class="page-container">
+        <h2 class="show-on-print">Bài Tập Cộng</h2>
         <div class="problem-columns">
             {{range .Items1}}
             <li>
@@ -205,9 +216,8 @@
         </div>
     </div>
     {{if .TwoSided}}
-    <h2 class="show-on-print">Bài Tập Cộng</h2>
-
-    <div class="problem-container">
+    <div class="page-container">
+        <h2 class="show-on-print">Bài Tập Cộng</h2>
         <div class="problem-columns">
             {{range .Items2}}
             <li>
