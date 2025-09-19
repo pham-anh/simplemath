@@ -69,6 +69,10 @@
             /* 50% width for two columns, with a gap */
         }
 
+        .show-on-print {
+            display: none;
+        }
+
         .emoji-bullet {
             display: inline-block;
             margin-right: 15px;
@@ -109,10 +113,11 @@
             margin: 0 5px;
             /* Add some space between buttons */
         }
-        
+
         /* Updated colors */
         .action-button.back {
-            background-color: #BDBDBD; /* A light grey for the back button */
+            background-color: #BDBDBD;
+            /* A light grey for the back button */
         }
 
         .action-button.print {
@@ -122,7 +127,7 @@
         .action-button.generate-new {
             background-color: #00bfff;
         }
-        
+
         .action-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
@@ -148,7 +153,10 @@
         }
 
         @media print {
-            .action-button {
+
+            .action-button,
+            h3,
+            h2 {
                 display: none;
             }
 
@@ -156,7 +164,6 @@
                 background: none;
             }
 
-            h2,
             li,
             .emoji-bullet,
             .problem-text {
@@ -166,6 +173,10 @@
 
             .problem-container {
                 box-shadow: none;
+            }
+
+            .show-on-print {
+                display: block;
             }
         }
     </style>
@@ -178,6 +189,10 @@
         <a href="javascript:location.reload();" class="action-button generate-new">Tạo Bài Tập Mới</a>
         <button class="action-button print" onclick="window.print()">In</button>
     </div>
+    {{if .TwoSided}}
+    <h2 class="show-on-print">Bài Tập Cộng</h2>
+
+    {{end}}
     <div class="problem-container">
         <div class="problem-columns">
             {{range .Items1}}
@@ -189,6 +204,21 @@
             {{end}}
         </div>
     </div>
+    {{if .TwoSided}}
+    <h2 class="show-on-print">Bài Tập Cộng</h2>
+
+    <div class="problem-container">
+        <div class="problem-columns">
+            {{range .Items2}}
+            <li>
+                <span class="emoji-bullet">{{.Emoji}}</span>
+                <span class="problem-text">{{.Text}}</span>
+                <span class="answer-line"></span>
+            </li>
+            {{end}}
+        </div>
+    </div>
+    {{end}}
 </body>
 
 </html>
