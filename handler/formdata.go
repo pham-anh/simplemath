@@ -13,6 +13,7 @@ type FormData struct {
 	NumQuestions int    `form:"numQuestions"`
 	NumOperands  int    `form:"numOperands"`
 	Digits       []int  `form:"numDigits"`
+	TwoSided     bool   `form:"twoSided"`
 }
 
 func (f *FormData) validate() error {

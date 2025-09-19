@@ -23,13 +23,15 @@ type SubmitHandler struct {
 
 type Result struct {
 	Operator string
-	Items    []Item
+	Items1   []Item
+	Items2   []Item // Only used if TwoSided is true
+	TwoSided bool
 }
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
 
 func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
-	form, err := FormDataFromRequest(c)
+	f, err := FormDataFromRequest(c)
 	if err != nil {
 		c.SetCookie(&http.Cookie{
 			Name:     "flash_error",
@@ -41,15 +43,38 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		return c.Redirect(303, "/")
 	}
 
-	sym := operator.Operator(form.Operator).Symbol()
-	seen := map[string]bool{}
-	count, attempts, maxAttempts := 0, 0, form.NumQuestions*10
+	var items1, items2 []Item
+	items1 = h.generate(f)
+	if f.TwoSided {
+		items2 = h.generate(f)
+	}
 
+	// Load and execute the template.
+	tpl, err := template.ParseFiles("statics/result.html")
+	if err != nil {
+		return err
+	}
+
+	result := Result{
+		Operator: f.Operator,
+		Items1:   items1,
+		Items2:   items2,
+		TwoSided: f.TwoSided,
+	}
+
+	_ = tpl.Execute(c.Response().Writer, result)
+	return nil
+}
+
+func (h *SubmitHandler) generate(f *FormData) []Item {
+	sym := operator.Operator(f.Operator).Symbol()
+	seen := map[string]bool{}
+	count, attempts, maxAttempts := 0, 0, f.NumQuestions*10
 	var items []Item
-	for count < form.NumQuestions && attempts < maxAttempts {
-		ops := make([]int, form.NumOperands)
-		for i := 0; i < form.NumOperands; i++ {
-			ops[i] = gen.RandomWithDigits(h.rng, form.Digits[i])
+	for count < f.NumQuestions && attempts < maxAttempts {
+		ops := make([]int, f.NumOperands)
+		for i := 0; i < f.NumOperands; i++ {
+			ops[i] = gen.RandomWithDigits(h.rng, f.Digits[i])
 		}
 		problem := gen.JoinOperands(ops, sym)
 		if !seen[problem] {
@@ -62,17 +87,7 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		}
 		attempts++
 	}
-
-	// Load and execute the template.
-	tpl, err := template.ParseFiles("statics/result.html")
-	if err != nil {
-		return err
-	}
-	_ = tpl.Execute(c.Response().Writer, Result{
-		Operator: form.Operator,
-		Items:    items,
-	})
-	return nil
+	return items
 }
 
 // Get a random emoji from the emojis slice.
@@ -81,58 +96,4 @@ func getRandomEmoji() string {
 	randomIndex := rand.Intn(len(emojis))
 	// Return the emoji at the random index
 	return emojis[randomIndex]
-}
-
-// Large slice of emojis covering the requested categories.
-var emojis = []string{
-	// Animals & Nature
-	"🐵", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐩", "🐺", "🦊",
-	"🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴", "🐎", "🦌",
-	"🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑",
-	"🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭",
-	"🐁", "🐀", "🐹", "🐰", "🐇", "🐿️", "🦫", "🦡", "🦔", "🦦",
-	"🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🐾", "🦃", "🐔", "🐓",
-	"🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", "🦢", "🦉",
-	"🦤", "🦩", "🦜", "🐸", "🐊", "🐢", "🦎", "🐍", "🐲", "🐉",
-	"🦕", "🦖", "🐳", "🐋", "🐬", "🦭", "🐠", "🐟", "🐡", "🦈",
-	"🐙", "🐚", "🐌", "🦋", "🐛", "🐜", "🐝", "🪲", "🐞", "🦗",
-	"🪳", "🕷️", "🕸️", "🦂", "🦟", "🪰", "🪱", "🦠", "💐", "🌸",
-	"💮", "🪷", "🪻", "🌷", "🌹", "🥀", "🌺", "🌻", "🌼", "🍂",
-	"🍁", "🌾", "🌿", "🌱", "🌲", "🌳", "🌴", "🌵", "🪴", "🪹",
-	"🪺", "🌰", "🍄", "🌎", "🌍", "🌏", "🌑", "🌒", "🌓", "🌔",
-	"🌕", "🌖", "🌗", "🌘", "🌙", "🌚", "🌛", "🌜", "🌝", "🌞",
-	"🌟", "🌠", "🌌", "☄️", "🪐", "☀️", "🌡️", "🌤️", "🌥️", "🌦️",
-	"☁️", "🌧️", "⛈️", "🌩️", "⚡", "🔥", "💥", "❄️", "🌨️", "☃️",
-	"⛄", "🌬️", "💨", "🌪️", "🌫️", "🌈", "☂️", "☔", "💧", "🌊",
-	"🪨", "🪵", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏞️", "🛣️", "🛤️",
-	"🌅", "🌄", "🏙️", "🌉", "🌃", "🌆", "🌇",
-
-	// Food & Drink
-	"🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏",
-	"🍐", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑",
-	"🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄",
-	"🧅", "🥜", "🌰", "🫚", "🫛", "🫘", "🍞", "🥐", "🥖", "🫓",
-	"🥨", "🧀", "🥚", "🍳", "🧈", "🥓", "🥩", "🍗", "🍖", "🦴",
-	"🌭", "🍔", "🍟", "🍕", "🫔", "🥪", "🫕", "🥙", "🧆", "🌮",
-	"🌯", "🫙", "🫛", "🍝", "🍜", "🍲", "🍛", "🍣", "🍱", "🥟",
-	"🦪", "🍚", "🍘", "🍙", "🍢", "🍡", "🍧", "🍡", "🍨", "🍦",
-	"🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮",
-	"🍯", "🍶", "🍼", "🥛", "☕", "🍵", "🫖", "🧋", "🍾", "🍷",
-	"🍸", "🍹", "🍻", "🥂", "🥃", "🫗", "🥤", "🧊", "🥄", "🍴",
-	"🍽️", "🔪", "🥢", "🧂",
-
-	// Travel & Places
-	"🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐",
-	"🛻", "🚚", "🚛", "🚜", "🛵", "🏍️", "🛺", "🚲", "🛴", "🦼",
-	"🦽", "🩼", "🛞", "🚨", "🚔", "🚍", "🚖", "🚡", "🚠", "🚟",
-	"🚃", "🚄", "🚅", "🚂", "🚆", "🚇", "🚈", "🚝", "🚟", "🛗",
-	"✈️", "🛫", "🛬", "🚁", "🚀", "🛸", "🛶", "⛵", "🚤", "🛥️",
-	"🛳️", "⛴️", "🚢", "⚓", "🚧", "🚦", "🚥", "⛽", "🚏", "🗺️",
-	"🗾", "🧭", "💒", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "🏰",
-	"🏯", "🏟️", "🗼", "🗽", "🏠", "🏡", "🏘️", "🛖", "🏚️", "🏢",
-	"🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏭", "🏯",
-	"🏯", "🏰", "🗼", "🗽", "🏠", "🏡", "🏘️", "🏚️", "🏢", "🏣",
-	"🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏭", "🏯", "🏯",
-	"🌃", "🌆", "🌇", "🌉", "🛕", "🕍", "⛩️", "🕋", "🏛️", "🛖",
-	"🏞️", "🛣️", "🛤️", "🌅", "🌄", "🏙️", "🌉", "🌃", "🌆", "🌇",
 }

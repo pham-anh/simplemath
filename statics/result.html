@@ -179,8 +179,9 @@
         <button class="action-button print" onclick="window.print()">In</button>
     </div>
     <div class="problem-container">
+        {{if .TwoSided}}
         <div class="problem-columns">
-            {{range .Items}}
+            {{range .Items1}}
             <li>
                 <span class="emoji-bullet">{{.Emoji}}</span>
                 <span class="problem-text">{{.Text}}</span>
@@ -188,6 +189,27 @@
             </li>
             {{end}}
         </div>
+        <div style="page-break-before: always;"></div>
+        <div class="problem-columns">
+            {{range .Items2}}
+            <li>
+                <span class="emoji-bullet">{{.Emoji}}</span>
+                <span class="problem-text">{{.Text}}</span>
+                <span class="answer-line"></span>
+            </li>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="problem-columns">
+            {{range .Items1}}
+            <li>
+                <span class="emoji-bullet">{{.Emoji}}</span>
+                <span class="problem-text">{{.Text}}</span>
+                <span class="answer-line"></span>
+            </li>
+            {{end}}
+        </div>
+        {{end}}
     </div>
 </body>
 
