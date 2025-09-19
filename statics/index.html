@@ -101,7 +101,7 @@
             font-size: 1rem;
             text-align: center;
             transition: border-color 0.3s;
-            color: #777; /* Softer text color for inputs */
+            color: #777;
         }
 
         select:focus {
@@ -165,20 +165,19 @@
             margin-top: 0;
         }
 
-        /* Style the checkmark */
         .checkbox-container input[type="checkbox"]::before {
-            content: '\2713'; /* A checkmark character */
+            content: '\2713';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
             font-size: 1.5rem;
-            color: var(--primary-color); /* The checkmark color */
+            color: var(--primary-color);
             transition: transform 0.2s;
         }
         
         .checkbox-container input[type="checkbox"]:checked {
-            background-color: transparent; /* A transparent background */
+            background-color: transparent;
         }
 
         .checkbox-container input[type="checkbox"]:checked::before {
@@ -241,12 +240,24 @@
 
       const numOperandsSelect = document.getElementById('numOperands');
       const digitsContainer = document.getElementById('digitsContainer');
+      
+      // We will use a single object to persistently store selected values
+      const operandSelections = {};
+
       function renderDigitsSelects() {
         const count = parseInt(numOperandsSelect.value || '2', 10);
+
+        // 1. Update our persistent storage with the current selections before clearing the DOM
+        const currentSelects = digitsContainer.querySelectorAll('select');
+        currentSelects.forEach((select, index) => {
+          operandSelections[index] = select.value;
+        });
+
         digitsContainer.innerHTML = '';
-        for (let i = 1; i <= count; i++) {
+
+        for (let i = 0; i < count; i++) {
           const label = document.createElement('label');
-          label.textContent = 'Số Hạng ' + i + ':';
+          label.textContent = 'Số Hạng ' + (i + 1) + ':';
           label.style.display = 'inline-block';
           label.style.width = '120px';
           const select = document.createElement('select');
@@ -258,12 +269,20 @@
             select.appendChild(option);
           }
           select.style.marginLeft = '8px';
+
+          // 2. Set the value from our persistent storage
+          // If a value exists, use it. Otherwise, default to '1'.
+          select.value = operandSelections[i] || '1';
+
           digitsContainer.appendChild(label);
           digitsContainer.appendChild(select);
           digitsContainer.appendChild(document.createElement('br'));
         }
       }
+
       numOperandsSelect.addEventListener('change', renderDigitsSelects);
+      
+      // Initialize the selectors for the first time
       renderDigitsSelects();
 
       // New JavaScript for tab functionality
@@ -272,11 +291,8 @@
 
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          // Remove active class from all tabs
           tabs.forEach(t => t.classList.remove('active'));
-          // Add active class to the clicked tab
           tab.classList.add('active');
-          // Update the hidden input value
           operatorInput.value = tab.getAttribute('data-value');
         });
       });
