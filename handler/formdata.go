@@ -37,8 +37,8 @@ func (f *FormData) validate() error {
 		if d < 1 {
 			return fmt.Errorf("Số chữ số phải >= 1")
 		}
-		if d > 3 {
-			return fmt.Errorf("Số chữ số phải <= 3")
+		if d > 2 {
+			return fmt.Errorf("Số chữ số phải <= 2")
 		}
 	}
 	return nil
