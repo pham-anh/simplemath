@@ -25,6 +25,11 @@
             margin: 0;
             padding: 20px;
         }
+        
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+        }
 
         h2 {
             font-family: 'Montserrat', sans-serif;
@@ -154,12 +159,11 @@
         }
 
         @media print {
-
             .action-button,
             .no-print {
                 display: none;
             }
-
+            
             body {
                 background: none;
                 -webkit-print-color-adjust: exact;
@@ -175,7 +179,7 @@
             .page-container+.page-container {
                 page-break-before: always;
             }
-
+            
             li,
             .emoji-bullet,
             .problem-text {
@@ -194,11 +198,11 @@
                 margin-bottom: 40px;
                 text-shadow: none;
             }
-
+            
             .show-on-print {
                 margin-top: 0px;
             }
-
+            
             .show-on-print2 {
                 margin-top: 15px;
             }
@@ -207,6 +211,7 @@
 </head>
 
 <body>
+    <img src="/favicon.png" alt="App Logo" class="logo" width="100">
     <h2 class="no-print">Bài Tập Cộng</h2>
     <div class="button-group no-print">
         <a href="/" class="action-button back">Quay Lại</a>
