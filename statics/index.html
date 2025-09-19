@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +7,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Montserrat:wght@700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #ff6f61;
@@ -38,7 +36,7 @@
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .container {
@@ -64,7 +62,7 @@
             font-size: 1.2rem;
             color: var(--secondary-color);
         }
-
+        
         .tab-container {
             display: flex;
             gap: 10px;
@@ -143,9 +141,60 @@
             margin-top: 0;
             width: 120px;
         }
+        
+        /* New styles for the checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+            /* Correct vertical alignment */
+            flex-shrink: 0; 
+            margin-top: 0;
+        }
+
+        .checkbox-container input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 2px;
+            transition: transform 0.2s;
+        }
+        
+        .checkbox-container input[type="checkbox"]:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .checkbox-container input[type="checkbox"]:checked::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .checkbox-container label {
+            /* Remove default label styles that cause misalignment */
+            margin: 0; 
+            color: var(--secondary-color); /* Keep the text color */
+        }
     </style>
 </head>
-
 <body>
     <h1>Tạo Bài Tập Toán</h1>
     <div class="container">
@@ -156,90 +205,86 @@
                 <div class="tab active" data-value="addition">Phép Cộng</div>
             </div>
             <input type="hidden" name="operator" id="operatorInput" value="addition">
-
+            
             <label for="numQuestions">Số Lượng Câu:</label>
             <select id="numQuestions" name="numQuestions">
                 <option value="10">10</option>
                 <option value="20">20</option>
             </select>
-
+            
             <label for="numOperands">Số Lượng Số Hạng:</label>
             <select id="numOperands" name="numOperands">
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
-
+            
             <label>Số Chữ Số Cho Mỗi Số Hạng:</label>
             <div id="digitsContainer"></div>
-
-            <label for="numPages">Số Trang In:</label>
-            <select id="numPages" name="numPages">
-                <option value="1">1</option>
-                <option value="2">2</option>
-            </select>
-
-            <br>
+            
+            <div class="checkbox-container">
+                <input type="checkbox" id="two-sided" name="twoSided" value="true">
+                <label for="two-sided">In 2 mặt?</label>
+            </div>
             <button type="submit">Tạo Bài Tập!</button>
         </form>
     </div>
     <script>
-        (function () {
-            // Show validation error from flash cookie and clear it
-            const errorBox = document.getElementById('error');
-            const cookie = document.cookie.split('; ').find(r => r.startsWith('flash_error='));
-            if (cookie) {
-                const val = decodeURIComponent(cookie.split('=')[1] || '');
+    (function() {
+      // Show validation error from flash cookie and clear it
+      const errorBox = document.getElementById('error');
+      const cookie = document.cookie.split('; ').find(r => r.startsWith('flash_error='));
+      if (cookie) {
+        const val = decodeURIComponent(cookie.split('=')[1] || '');
 
-                errorBox.textContent = val.replace(/\+/g, ' ');
-                // Clear cookie
-                document.cookie = 'flash_error=; Max-Age=0; path=/';
-            } else {
-                errorBox.textContent = '';
-            }
+        errorBox.textContent = val.replace(/\+/g, ' ');
+        // Clear cookie
+        document.cookie = 'flash_error=; Max-Age=0; path=/';
+      } else {
+        errorBox.textContent = '';
+      }
 
-            const numOperandsSelect = document.getElementById('numOperands');
-            const digitsContainer = document.getElementById('digitsContainer');
-            function renderDigitsSelects() {
-                const count = parseInt(numOperandsSelect.value || '2', 10);
-                digitsContainer.innerHTML = '';
-                for (let i = 1; i <= count; i++) {
-                    const label = document.createElement('label');
-                    label.textContent = 'Số Hạng ' + i + ':';
-                    label.style.display = 'inline-block';
-                    label.style.width = '120px';
-                    const select = document.createElement('select');
-                    select.name = 'numDigits';
-                    for (let j = 1; j <= 3; j++) {
-                        const option = document.createElement('option');
-                        option.value = j;
-                        option.textContent = j;
-                        select.appendChild(option);
-                    }
-                    select.style.marginLeft = '8px';
-                    digitsContainer.appendChild(label);
-                    digitsContainer.appendChild(select);
-                    digitsContainer.appendChild(document.createElement('br'));
-                }
-            }
-            numOperandsSelect.addEventListener('change', renderDigitsSelects);
-            renderDigitsSelects();
+      const numOperandsSelect = document.getElementById('numOperands');
+      const digitsContainer = document.getElementById('digitsContainer');
+      function renderDigitsSelects() {
+        const count = parseInt(numOperandsSelect.value || '2', 10);
+        digitsContainer.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+          const label = document.createElement('label');
+          label.textContent = 'Số Hạng ' + i + ':';
+          label.style.display = 'inline-block';
+          label.style.width = '120px';
+          const select = document.createElement('select');
+          select.name = 'numDigits';
+          for (let j = 1; j <= 3; j++) {
+            const option = document.createElement('option');
+            option.value = j;
+            option.textContent = j;
+            select.appendChild(option);
+          }
+          select.style.marginLeft = '8px';
+          digitsContainer.appendChild(label);
+          digitsContainer.appendChild(select);
+          digitsContainer.appendChild(document.createElement('br'));
+        }
+      }
+      numOperandsSelect.addEventListener('change', renderDigitsSelects);
+      renderDigitsSelects();
 
-            // New JavaScript for tab functionality
-            const tabs = document.querySelectorAll('.tab');
-            const operatorInput = document.getElementById('operatorInput');
+      // New JavaScript for tab functionality
+      const tabs = document.querySelectorAll('.tab');
+      const operatorInput = document.getElementById('operatorInput');
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    // Add active class to the clicked tab
-                    tab.classList.add('active');
-                    // Update the hidden input value
-                    operatorInput.value = tab.getAttribute('data-value');
-                });
-            });
-        })();
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          // Add active class to the clicked tab
+          tab.classList.add('active');
+          // Update the hidden input value
+          operatorInput.value = tab.getAttribute('data-value');
+        });
+      });
+    })();
     </script>
 </body>
-
 </html>
