@@ -22,24 +22,11 @@
         <a href="javascript:location.reload();" class="action-button generate-new">Tạo Bài Tập Mới</a>
         <button class="action-button print" onclick="window.print()">In</button>
     </div>
-
+    {{range .ProblemSets}}
     <div class="page-container">
         <h1 class="show-on-print"><span><img src="/favicon.png" alt="App Logo" width="50"></span>Bài Tập Cộng</h1>
         <div class="problem-columns">
-            {{range .Items1}}
-            <li>
-                <span class="emoji-bullet">{{.Emoji}}</span>
-                <span class="problem-text">{{.Text}}</span>
-                <span class="answer-line"></span>
-            </li>
-            {{end}}
-        </div>
-    </div>
-    {{if .TwoSided}}
-    <div class="page-container">
-        <h1 class="show-on-print2"><span><img src="/favicon.png" alt="App Logo" width="50"></span>Bài Tập Cộng</h1>
-        <div class="problem-columns">
-            {{range .Items2}}
+            {{range .}}
             <li>
                 <span class="emoji-bullet">{{.Emoji}}</span>
                 <span class="problem-text">{{.Text}}</span>

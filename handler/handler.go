@@ -22,10 +22,8 @@ type SubmitHandler struct {
 }
 
 type Result struct {
-	Operator string
-	Items1   []Item
-	Items2   []Item // Only used if TwoSided is true
-	TwoSided bool
+	Operator    string
+	ProblemSets [][]Item
 }
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
@@ -43,10 +41,10 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		return c.Redirect(303, "/")
 	}
 
-	var items1, items2 []Item
-	items1 = h.generate(f)
+	var sets [][]Item
+	sets = append(sets, h.generate(f))
 	if f.TwoSided {
-		items2 = h.generate(f)
+		sets = append(sets, h.generate(f))
 	}
 
 	// Load and execute the template.
@@ -56,10 +54,8 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	}
 
 	result := Result{
-		Operator: f.Operator,
-		Items1:   items1,
-		Items2:   items2,
-		TwoSided: f.TwoSided,
+		Operator:    f.Operator,
+		ProblemSets: sets,
 	}
 
 	_ = tpl.Execute(c.Response().Writer, result)
