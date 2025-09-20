@@ -16,7 +16,7 @@
 
 <body>
     <img src="/favicon.png" alt="App Logo" class="logo" width="100">
-    <h2 class="no-print">Bài Tập Cộng</h2>
+    <h1 class="no-print">Bài Tập Cộng</h1>
     <div class="button-group no-print">
         <a href="/" class="action-button back">Quay Lại</a>
         <a href="javascript:location.reload();" class="action-button generate-new">Tạo Bài Tập Mới</a>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="page-container">
-        <h2 class="show-on-print">Bài Tập Cộng</h2>
+        <h1 class="show-on-print">Bài Tập Cộng</h1>
         <div class="problem-columns">
             {{range .Items1}}
             <li>
@@ -37,7 +37,7 @@
     </div>
     {{if .TwoSided}}
     <div class="page-container">
-        <h2 class="show-on-print2">Bài Tập Cộng</h2>
+        <h1 class="show-on-print2">Bài Tập Cộng</h1>
         <div class="problem-columns">
             {{range .Items2}}
             <li>
