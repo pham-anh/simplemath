@@ -21,7 +21,7 @@ h1 {
     text-align: center;
     /* margin-top: 20px; */
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -150,54 +150,4 @@ label {
 .show-on-print,
 .show-on-print2 {
     display: none;
-}
-
-@media print {
-    .action-button,
-    .no-print {
-        display: none;
-    }
-    
-    body {
-        background: none;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    .page-container {
-        box-shadow: none;
-        margin: 0;
-        padding: 10px;
-    }
-
-    .page-container+.page-container {
-        page-break-before: always;
-    }
-    
-    li,
-    .emoji-bullet,
-    .problem-text {
-        color: #000;
-        text-shadow: none;
-    }
-
-    .show-on-print,
-    .show-on-print2 {
-        display: block;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        font-size: 2.5rem;
-        color: #000;
-        text-align: center;
-        margin-bottom: 40px;
-        text-shadow: none;
-    }
-    
-    .show-on-print {
-        margin-top: 0px;
-    }
-    
-    .show-on-print2 {
-        margin-top: 15px;
-    }
 }
