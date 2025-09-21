@@ -19,7 +19,7 @@ COPY . .
 # Build the Go application for a Linux environment.
 # CGO_ENABLED=0 creates a statically linked binary, which is a best practice for small images.
 # The `-o` flag specifies the output name and path of the binary.
-RUN CGO_ENABLED=0 GOOS=linux go build -o /simplemath ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /simplemath ./cmd/main.go
 
 # ---
 
