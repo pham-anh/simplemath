@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
+	"simplemath/i18n"
 	"simplemath/operator"
 
 	"github.com/labstack/echo/v4"
@@ -14,15 +16,17 @@ type FormData struct {
 	NumOperands  int    `form:"numOperands"`
 	Digits       []int  `form:"numDigits"`
 	TwoSided     bool   `form:"twoSided"`
+	Language     string `form:"language"`
 }
 
 func (f *FormData) validate() error {
+	trans := i18n.NewTranslator(f.Language)
 	op := operator.Operator(f.Operator)
 	if f.Operator == "" || (op != operator.Addition && op != operator.Subtraction && op != operator.Multiplication && op != operator.Division) {
-		return fmt.Errorf("Phép toán không hợp lệ hoặc bị thiếu")
+		return errors.New(trans.T("error.invalidOperator"))
 	}
 	if f.NumQuestions < 1 {
-		return fmt.Errorf("Số lượng câu hỏi phải ít nhất là 1")
+		return errors.New(trans.T("error.minQuestions"))
 	}
 	if f.NumOperands < 2 {
 		f.NumOperands = 2
@@ -31,14 +35,14 @@ func (f *FormData) validate() error {
 		f.NumOperands = 3
 	}
 	if len(f.Digits) != f.NumOperands {
-		return fmt.Errorf("Vui lòng cung cấp số chữ số cho mỗi số hạng (%d)", f.NumOperands)
+		return fmt.Errorf(trans.T("error.digitsCount"), f.NumOperands)
 	}
 	for _, d := range f.Digits {
 		if d < 1 {
-			return fmt.Errorf("Số chữ số phải >= 1")
+			return errors.New(trans.T("error.minDigits"))
 		}
 		if d > 2 {
-			return fmt.Errorf("Số chữ số phải <= 2")
+			return errors.New(trans.T("error.maxDigits"))
 		}
 	}
 	return nil

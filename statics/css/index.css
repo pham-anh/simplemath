@@ -5,13 +5,37 @@ body {
     min-height: 100vh;
 }
 
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
 
-select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 8px;
+.lang-btn {
+    padding: 8px 16px;
     border: 2px solid var(--secondary-color);
+    background-color: white;
+    color: var(--secondary-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.lang-btn:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.lang-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
     outline: none;
     font-family: 'ABeeZee', sans-serif;
     font-size: 1rem;
