@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Bài Tập Toán</title>
+    <title id="pageTitle">{{.Trans.T "page.title"}}</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,40 +18,40 @@
     </div>
     
     <img src="/favicon.png" alt="App Logo" class="logo" width="100">
-    <h1 id="headerCreate">Tạo Bài Tập Toán</h1>
+    <h1 id="headerCreate">{{.Trans.T "header.create"}}</h1>
     <div class="container">
         <div id="error" class="no-print"></div>
         <form method="POST" action="/">
-            <label id="labelOperator">Chọn Phép Toán:</label>
+            <label id="labelOperator">{{.Trans.T "label.operator"}}</label>
             <div class="tab-container">
-                <div class="tab active" data-value="addition" data-label-vi="Phép Cộng" data-label-en="Addition">Phép Cộng</div>
-                <div class="tab" data-value="subtraction" data-label-vi="Phép Trừ" data-label-en="Subtraction">Phép Trừ</div>
-                <div class="tab" data-value="multiplication" data-label-vi="Phép Nhân" data-label-en="Multiplication">Phép Nhân</div>
-                <div class="tab" data-value="division" data-label-vi="Phép Chia" data-label-en="Division">Phép Chia</div>
+                <div class="tab active" data-value="addition" data-label-vi="Phép Cộng" data-label-en="Addition">Addition</div>
+                <div class="tab" data-value="subtraction" data-label-vi="Phép Trừ" data-label-en="Subtraction">Subtraction</div>
+                <div class="tab" data-value="multiplication" data-label-vi="Phép Nhân" data-label-en="Multiplication">Multiplication</div>
+                <div class="tab" data-value="division" data-label-vi="Phép Chia" data-label-en="Division">Division</div>
             </div>
             <input type="hidden" name="operator" id="operatorInput" value="addition">
             <input type="hidden" name="language" id="languageInput" value="en">
             
-            <label for="numQuestions" id="labelNumQuestions">Số Lượng Câu:</label>
+            <label for="numQuestions" id="labelNumQuestions">{{.Trans.T "label.numQuestions"}}</label>
             <select id="numQuestions" name="numQuestions">
                 <option value="10">10</option>
                 <option value="20">20</option>
             </select>
             
-            <label for="numOperands" id="labelNumOperands">Số Lượng Số Hạng:</label>
+            <label for="numOperands" id="labelNumOperands">{{.Trans.T "label.numOperands"}}</label>
             <select id="numOperands" name="numOperands">
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
             
-            <label id="labelDigits">Số Chữ Số Cho Mỗi Số Hạng:</label>
+            <label id="labelDigits">{{.Trans.T "label.digits"}}</label>
             <div id="digitsContainer"></div>
             
             <div class="checkbox-container">
                 <input type="checkbox" id="two-sided" name="twoSided" value="true">
-                <label for="two-sided" id="labelTwoSided">In 2 mặt</label>
+                <label for="two-sided" id="labelTwoSided">{{.Trans.T "label.twoSided"}}</label>
             </div>
-            <button type="submit" id="buttonCreate">Tạo Bài Tập!</button>
+            <button type="submit" id="buttonCreate">{{.Trans.T "button.create"}}</button>
         </form>
     </div>
     <script>

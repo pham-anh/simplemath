@@ -31,6 +31,21 @@ type Result struct {
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
 
+func (h *SubmitHandler) HandleIndex(c echo.Context) error {
+	trans := i18n.NewTranslator("en")
+
+	indexData := map[string]interface{}{
+		"Trans": trans,
+	}
+
+	tpl, err := template.ParseFiles("statics/index.html")
+	if err != nil {
+		return err
+	}
+
+	return tpl.Execute(c.Response().Writer, indexData)
+}
+
 func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	f, err := FormDataFromRequest(c)
 	if err != nil {
