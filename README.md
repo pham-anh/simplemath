@@ -1,4 +1,8 @@
-# simplemath
+# simplemath - AI vibe coding
+
+A super simple application to taste AI vide coding.
+
+## Build
 
 ```bash
 set -x
@@ -7,7 +11,9 @@ docker build --push -t asia-east1-docker.pkg.dev/inspired-micron-198514/pqa/simp
 set +x
 ```
 
-Rate Limit
+## Test
+
+Test rate Limit
 
 ```
 simplemath git:(main) ✗ for i in {1..301}; do curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080; done
