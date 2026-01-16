@@ -1,102 +1,74 @@
 package i18n
 
-type Language string
+import (
+	"embed"
+	"fmt"
 
-const (
-	Vietnamese Language = "vi"
-	English    Language = "en"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
+	"gopkg.in/yaml.v3"
 )
 
-type Translator struct {
-	lang Language
-}
+//go:embed *.yaml
+var translations embed.FS
 
-func NewTranslator(lang string) *Translator {
-	l := Language(lang)
-	if l != English && l != Vietnamese {
-		l = English // Default to English
+var bundle *i18n.Bundle
+
+func init() {
+	bundle = i18n.NewBundle(language.English)
+	bundle.RegisterUnmarshalFunc("yaml", yaml.Unmarshal)
+
+	// Load English translations
+	if _, err := bundle.LoadMessageFileFS(translations, "en.yaml"); err != nil {
+		panic(fmt.Sprintf("Failed to load English translations: %v", err))
 	}
-	return &Translator{lang: l}
-}
 
-func (t *Translator) T(key string) string {
-	if t.lang == English {
-		return translations[English][key]
+	// Load Vietnamese translations
+	if _, err := bundle.LoadMessageFileFS(translations, "vi.yaml"); err != nil {
+		panic(fmt.Sprintf("Failed to load Vietnamese translations: %v", err))
 	}
-	return translations[Vietnamese][key]
 }
 
-var translations = map[Language]map[string]string{
-	Vietnamese: {
-		// Page titles and headers
-		"page.title":        "Bài Tập Toán",
-		"page.result.title": "Bài Tập Đã Tạo",
-		"header.create":     "Tạo Bài Tập Toán",
-		"header.result":     "Bài Tập Cộng",
+// Localizer is a wrapper around i18n.Localizer for template usage
+type Localizer struct {
+	localizer *i18n.Localizer
+}
 
-		// Form labels
-		"label.operator":     "Chọn Phép Toán:",
-		"label.numQuestions": "Số Lượng Câu:",
-		"label.numOperands":  "Số Lượng Số Hạng:",
-		"label.digits":       "Số Chữ Số Cho Mỗi Số Hạng:",
-		"label.twoSided":     "In 2 mặt",
+// NewLocalizer creates a new localizer for the given language
+func NewLocalizer(lang string) *Localizer {
+	var tag language.Tag
+	switch lang {
+	case "vi":
+		tag = language.Vietnamese
+	default:
+		tag = language.English
+	}
 
-		// Operator names
-		"operator.addition":       "Phép Cộng",
-		"operator.subtraction":    "Phép Trừ",
-		"operator.multiplication": "Phép Nhân",
-		"operator.division":       "Phép Chia",
+	return &Localizer{
+		localizer: i18n.NewLocalizer(bundle, tag.String()),
+	}
+}
 
-		// Operand labels
-		"operand.label": "Số Hạng",
+// T translates a message with the given ID
+func (l *Localizer) T(messageID string, templateData ...map[string]interface{}) string {
+	config := &i18n.LocalizeConfig{
+		MessageID: messageID,
+	}
 
-		// Buttons
-		"button.create":      "Tạo Bài Tập!",
-		"button.back":        "Quay Lại",
-		"button.generateNew": "Tạo Bài Tập Mới",
-		"button.print":       "In",
+	if len(templateData) > 0 {
+		config.TemplateData = templateData[0]
+	}
 
-		// Validation messages
-		"error.invalidOperator": "Phép toán không hợp lệ hoặc bị thiếu",
-		"error.minQuestions":    "Số lượng câu hỏi phải ít nhất là 1",
-		"error.digitsCount":     "Vui lòng cung cấp số chữ số cho mỗi số hạng (%d)",
-		"error.minDigits":       "Số chữ số phải >= 1",
-		"error.maxDigits":       "Số chữ số phải <= 2",
-	},
-	English: {
-		// Page titles and headers
-		"page.title":        "Math Exercise",
-		"page.result.title": "Generated Exercise",
-		"header.create":     "Create Math Exercise",
-		"header.result":     "Addition Exercise",
+	message, err := l.localizer.Localize(config)
+	if err != nil {
+		// Return the message ID if translation is not found
+		return messageID
+	}
 
-		// Form labels
-		"label.operator":     "Select Operation:",
-		"label.numQuestions": "Number of Questions:",
-		"label.numOperands":  "Number of Operands:",
-		"label.digits":       "Number of Digits for Each Operand:",
-		"label.twoSided":     "Print on Both Sides",
+	return message
+}
 
-		// Operator names
-		"operator.addition":       "Addition",
-		"operator.subtraction":    "Subtraction",
-		"operator.multiplication": "Multiplication",
-		"operator.division":       "Division",
-
-		// Operand labels
-		"operand.label": "Operand",
-
-		// Buttons
-		"button.create":      "Create Exercise!",
-		"button.back":        "Back",
-		"button.generateNew": "Generate New Exercise",
-		"button.print":       "Print",
-
-		// Validation messages
-		"error.invalidOperator": "Invalid or missing operation",
-		"error.minQuestions":    "Number of questions must be at least 1",
-		"error.digitsCount":     "Please provide number of digits for each operand (%d)",
-		"error.minDigits":       "Number of digits must be >= 1",
-		"error.maxDigits":       "Number of digits must be <= 2",
-	},
+// For compatibility with existing code
+func GetBundle() *i18n.Bundle {
+	return bundle
 }
