@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html id="htmlElement" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài Tập Toán</title>
+    <title id="pageTitle">{{.Trans.T "page.title"}}</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,41 +12,132 @@
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
+    <div class="language-selector no-print">
+        <button class="lang-btn" data-lang="vi">Tiếng Việt</button>
+        <button class="lang-btn active" data-lang="en">English</button>
+    </div>
+    
     <img src="/favicon.png" alt="App Logo" class="logo" width="100">
-    <h1>Tạo Bài Tập Toán</h1>
+    <h1 id="headerCreate">{{.Trans.T "header.create"}}</h1>
     <div class="container">
         <div id="error" class="no-print"></div>
         <form method="POST" action="/">
-            <label>Chọn Phép Toán:</label>
+            <label id="labelOperator">{{.Trans.T "label.operator"}}</label>
             <div class="tab-container">
-                <div class="tab active" data-value="addition">Phép Cộng</div>
+                <div class="tab active" data-value="addition" data-label-vi="Phép Cộng" data-label-en="Addition">Addition</div>
+                <div class="tab" data-value="subtraction" data-label-vi="Phép Trừ" data-label-en="Subtraction">Subtraction</div>
+                <div class="tab" data-value="multiplication" data-label-vi="Phép Nhân" data-label-en="Multiplication">Multiplication</div>
+                <div class="tab" data-value="division" data-label-vi="Phép Chia" data-label-en="Division">Division</div>
             </div>
             <input type="hidden" name="operator" id="operatorInput" value="addition">
+            <input type="hidden" name="language" id="languageInput" value="en">
             
-            <label for="numQuestions">Số Lượng Câu:</label>
+            <label for="numQuestions" id="labelNumQuestions">{{.Trans.T "label.numQuestions"}}</label>
             <select id="numQuestions" name="numQuestions">
                 <option value="10">10</option>
                 <option value="20">20</option>
             </select>
             
-            <label for="numOperands">Số Lượng Số Hạng:</label>
+            <label for="numOperands" id="labelNumOperands">{{.Trans.T "label.numOperands"}}</label>
             <select id="numOperands" name="numOperands">
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
             
-            <label>Số Chữ Số Cho Mỗi Số Hạng:</label>
+            <label id="labelDigits">{{.Trans.T "label.digits"}}</label>
             <div id="digitsContainer"></div>
             
             <div class="checkbox-container">
                 <input type="checkbox" id="two-sided" name="twoSided" value="true">
-                <label for="two-sided">In 2 mặt</label>
+                <label for="two-sided" id="labelTwoSided">{{.Trans.T "label.twoSided"}}</label>
             </div>
-            <button type="submit">Tạo Bài Tập!</button>
+            <button type="submit" id="buttonCreate">{{.Trans.T "button.create"}}</button>
         </form>
     </div>
     <script>
     (function() {
+      const translations = {
+        vi: {
+          pageTitle: 'Bài Tập Toán',
+          headerCreate: 'Tạo Bài Tập Toán',
+          labelOperator: 'Chọn Phép Toán:',
+          labelNumQuestions: 'Số Lượng Câu:',
+          labelNumOperands: 'Số Lượng Số Hạng:',
+          labelDigits: 'Số Chữ Số Cho Mỗi Số Hạng:',
+          labelTwoSided: 'In 2 mặt',
+          buttonCreate: 'Tạo Bài Tập!',
+          operandLabel: 'Số Hạng'
+        },
+        en: {
+          pageTitle: 'Math Exercise',
+          headerCreate: 'Create Math Exercise',
+          labelOperator: 'Select Operation:',
+          labelNumQuestions: 'Number of Questions:',
+          labelNumOperands: 'Number of Operands:',
+          labelDigits: 'Number of Digits for Each Operand:',
+          labelTwoSided: 'Print on Both Sides',
+          buttonCreate: 'Create Exercise!',
+          operandLabel: 'Operand'
+        }
+      };
+
+      const operatorLabels = {
+        vi: {
+          addition: 'Phép Cộng',
+          subtraction: 'Phép Trừ',
+          multiplication: 'Phép Nhân',
+          division: 'Phép Chia'
+        },
+        en: {
+          addition: 'Addition',
+          subtraction: 'Subtraction',
+          multiplication: 'Multiplication',
+          division: 'Division'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('language') || 'en';
+
+      function updateLanguage(lang) {
+        currentLanguage = lang;
+        localStorage.setItem('language', lang);
+        document.getElementById('htmlElement').lang = lang;
+        document.getElementById('languageInput').value = lang;
+        document.getElementById('pageTitle').textContent = translations[lang].pageTitle;
+        document.getElementById('headerCreate').textContent = translations[lang].headerCreate;
+        document.getElementById('labelOperator').textContent = translations[lang].labelOperator;
+        document.getElementById('labelNumQuestions').textContent = translations[lang].labelNumQuestions;
+        document.getElementById('labelNumOperands').textContent = translations[lang].labelNumOperands;
+        document.getElementById('labelDigits').textContent = translations[lang].labelDigits;
+        document.getElementById('labelTwoSided').textContent = translations[lang].labelTwoSided;
+        document.getElementById('buttonCreate').textContent = translations[lang].buttonCreate;
+        
+        // Update operator tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+          const operator = tab.getAttribute('data-value');
+          tab.textContent = operatorLabels[lang][operator];
+        });
+
+        // Update language selector buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-lang') === lang) {
+            btn.classList.add('active');
+          }
+        });
+
+        renderDigitsSelects();
+      }
+
+      // Language selector buttons
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const lang = btn.getAttribute('data-lang');
+          updateLanguage(lang);
+        });
+      });
+
       // Show validation error from flash cookie and clear it
       const errorBox = document.getElementById('error');
       const cookie = document.cookie.split('; ').find(r => r.startsWith('flash_error='));
@@ -75,7 +166,7 @@
 
         for (let i = 0; i < count; i++) {
           const label = document.createElement('label');
-          label.textContent = 'Số Hạng ' + (i + 1) + ':';
+          label.textContent = translations[currentLanguage].operandLabel + ' ' + (i + 1) + ':';
           label.style.display = 'inline-block';
           label.style.width = '120px';
           const select = document.createElement('select');
@@ -96,7 +187,7 @@
       }
 
       numOperandsSelect.addEventListener('change', renderDigitsSelects);
-      renderDigitsSelects();
+      updateLanguage(currentLanguage);
 
       const tabs = document.querySelectorAll('.tab');
       const operatorInput = document.getElementById('operatorInput');

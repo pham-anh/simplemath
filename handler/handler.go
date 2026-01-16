@@ -7,6 +7,7 @@ import (
 	"text/template"
 
 	"simplemath/gen"
+	"simplemath/i18n"
 	"simplemath/operator"
 
 	"github.com/labstack/echo/v4"
@@ -24,9 +25,26 @@ type SubmitHandler struct {
 type Result struct {
 	Operator    string
 	ProblemSets [][]Item
+	Language    string
+	Trans       *i18n.Translator
 }
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
+
+func (h *SubmitHandler) HandleIndex(c echo.Context) error {
+	trans := i18n.NewTranslator("en")
+
+	indexData := map[string]interface{}{
+		"Trans": trans,
+	}
+
+	tpl, err := template.ParseFiles("statics/index.html")
+	if err != nil {
+		return err
+	}
+
+	return tpl.Execute(c.Response().Writer, indexData)
+}
 
 func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	f, err := FormDataFromRequest(c)
@@ -56,6 +74,8 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 	result := Result{
 		Operator:    f.Operator,
 		ProblemSets: sets,
+		Language:    f.Language,
+		Trans:       i18n.NewTranslator(f.Language),
 	}
 
 	_ = tpl.Execute(c.Response().Writer, result)

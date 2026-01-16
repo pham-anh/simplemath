@@ -31,7 +31,7 @@ func main() {
 
 	e.POST("/", h.HandleSubmit, ratelimit)
 
-	e.GET("/", func(c echo.Context) error { return c.File("statics/index.html") }, ratelimit)
+	e.GET("/", h.HandleIndex, ratelimit)
 	e.File("/favicon.png", "statics/favicon.png")
 
 	// Serve static CSS files
