@@ -36,6 +36,12 @@ body {
     color: white;
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 2px solid var(--secondary-color);
     outline: none;
     font-family: 'ABeeZee', sans-serif;
     font-size: 1rem;
