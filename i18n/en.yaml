@@ -1,0 +1,68 @@
+- id: page.title
+  translation: Math Exercise
+
+- id: page.result.title
+  translation: Generated Exercise
+
+- id: header.create
+  translation: Create Math Exercise
+
+- id: header.result
+  translation: Addition Exercise
+
+- id: label.operator
+  translation: Select Operation
+
+- id: label.numQuestions
+  translation: Number of Questions
+
+- id: label.numOperands
+  translation: Number of Operands
+
+- id: label.digits
+  translation: Number of Digits for Each Operand
+
+- id: label.twoSided
+  translation: Print on Both Sides
+
+- id: operator.addition
+  translation: Addition
+
+- id: operator.subtraction
+  translation: Subtraction
+
+- id: operator.multiplication
+  translation: Multiplication
+
+- id: operator.division
+  translation: Division
+
+- id: operand.label
+  translation: Operand
+
+- id: button.create
+  translation: Create Exercise!
+
+- id: button.back
+  translation: Back
+
+- id: button.generateNew
+  translation: Generate New Exercise
+
+- id: button.print
+  translation: Print
+
+- id: error.invalidOperator
+  translation: Invalid or missing operation
+
+- id: error.minQuestions
+  translation: Number of questions must be at least 1
+
+- id: error.digitsCount
+  translation: Please provide number of digits for each operand ({{ .Count }})
+
+- id: error.minDigits
+  translation: Number of digits must be >= 1
+
+- id: error.maxDigits
+  translation: Number of digits must be <= 2

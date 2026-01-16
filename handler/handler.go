@@ -26,15 +26,15 @@ type Result struct {
 	Operator    string
 	ProblemSets [][]Item
 	Language    string
-	Trans       *i18n.Translator
+	Trans       *i18n.Localizer
 }
 
 func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
 
 func (h *SubmitHandler) HandleIndex(c echo.Context) error {
-	trans := i18n.NewTranslator("en")
+	trans := i18n.NewLocalizer("en")
 
-	indexData := map[string]interface{}{
+	indexData := map[string]any{
 		"Trans": trans,
 	}
 
@@ -75,7 +75,7 @@ func (h *SubmitHandler) HandleSubmit(c echo.Context) error {
 		Operator:    f.Operator,
 		ProblemSets: sets,
 		Language:    f.Language,
-		Trans:       i18n.NewTranslator(f.Language),
+		Trans:       i18n.NewLocalizer(f.Language),
 	}
 
 	_ = tpl.Execute(c.Response().Writer, result)

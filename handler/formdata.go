@@ -20,7 +20,7 @@ type FormData struct {
 }
 
 func (f *FormData) validate() error {
-	trans := i18n.NewTranslator(f.Language)
+	trans := i18n.NewLocalizer(f.Language)
 	op := operator.Operator(f.Operator)
 	if f.Operator == "" || (op != operator.Addition && op != operator.Subtraction && op != operator.Multiplication && op != operator.Division) {
 		return errors.New(trans.T("error.invalidOperator"))

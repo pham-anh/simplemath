@@ -1,0 +1,68 @@
+- id: page.title
+  translation: Bài Tập Toán
+
+- id: page.result.title
+  translation: Bài Tập Đã Tạo
+
+- id: header.create
+  translation: Tạo Bài Tập Toán
+
+- id: header.result
+  translation: Bài Tập Cộng
+
+- id: label.operator
+  translation: Chọn Phép Toán
+
+- id: label.numQuestions
+  translation: Số Lượng Câu
+
+- id: label.numOperands
+  translation: Số Lượng Số Hạng
+
+- id: label.digits
+  translation: Số Chữ Số Cho Mỗi Số Hạng
+
+- id: label.twoSided
+  translation: In 2 mặt
+
+- id: operator.addition
+  translation: Phép Cộng
+
+- id: operator.subtraction
+  translation: Phép Trừ
+
+- id: operator.multiplication
+  translation: Phép Nhân
+
+- id: operator.division
+  translation: Phép Chia
+
+- id: operand.label
+  translation: Số Hạng
+
+- id: button.create
+  translation: Tạo Bài Tập!
+
+- id: button.back
+  translation: Quay Lại
+
+- id: button.generateNew
+  translation: Tạo Bài Tập Mới
+
+- id: button.print
+  translation: In
+
+- id: error.invalidOperator
+  translation: Phép toán không hợp lệ hoặc bị thiếu
+
+- id: error.minQuestions
+  translation: Số lượng câu hỏi phải ít nhất là 1
+
+- id: error.digitsCount
+  translation: Vui lòng cung cấp số chữ số cho mỗi số hạng ({{ .Count }})
+
+- id: error.minDigits
+  translation: Số chữ số phải >= 1
+
+- id: error.maxDigits
+  translation: Số chữ số phải <= 2
