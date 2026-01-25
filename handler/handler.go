@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"math"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"sort"
 	"text/template"
 
 	"simplemath/gen"
@@ -18,9 +20,7 @@ type Item struct {
 	Text  string
 }
 
-type SubmitHandler struct {
-	rng *rand.Rand
-}
+type SubmitHandler struct{}
 
 type Result struct {
 	Operator    string
@@ -29,7 +29,9 @@ type Result struct {
 	Trans       *i18n.Localizer
 }
 
-func NewSubmitHandler(r *rand.Rand) *SubmitHandler { return &SubmitHandler{rng: r} }
+func NewSubmitHandler() *SubmitHandler {
+	return &SubmitHandler{}
+}
 
 func (h *SubmitHandler) HandleIndex(c echo.Context) error {
 	trans := i18n.NewLocalizer("en")
@@ -90,7 +92,18 @@ func (h *SubmitHandler) generate(f *FormData) []Item {
 	for count < f.NumQuestions && attempts < maxAttempts {
 		ops := make([]int, f.NumOperands)
 		for i := 0; i < f.NumOperands; i++ {
-			ops[i] = gen.RandomWithDigits(h.rng, f.Digits[i])
+			digit := f.Digits[i]
+			min := int(math.Pow10(digit - 1))
+			max := int(math.Pow10(digit)) - 1
+			ops[i] = gen.Random(min, max)
+		}
+
+		// if subtraction or division, ensure the first operand is the largest
+		if f.Operator == operator.Subtraction.String() || f.Operator == operator.Division.String() {
+			// sort operands in descending order
+			sort.Slice(ops, func(i, j int) bool {
+				return ops[i] > ops[j]
+			})
 		}
 		problem := gen.JoinOperands(ops, sym)
 		if !seen[problem] {
