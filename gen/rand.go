@@ -6,20 +6,9 @@ import (
 	"strings"
 )
 
-func PowerOfTen(exp int) int {
-	result := 1
-	for range exp {
-		result *= 10
-	}
-	return result
-}
-
-func RandomWithDigits(r *rand.Rand, d int) int {
-	if d <= 1 {
-		return r.Intn(9) + 1
-	}
-	min := PowerOfTen(d - 1)
-	span := PowerOfTen(d) - min
+func Random(min int, max int) int {
+	r := rand.New(rand.NewSource(rand.Int63()))
+	span := max - min
 	return min + r.Intn(span)
 }
 

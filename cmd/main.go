@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"time"
 
 	"simplemath/handler"
@@ -15,9 +14,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Secure())
 
-	// Seeded RNG for generation (inject into handler)
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	h := handler.NewSubmitHandler(r)
+	h := handler.NewSubmitHandler()
 
 	// Apply the rate limiter middleware to the POST endpoint.
 	// We'll limit it to 1 request per second from each IP address.
