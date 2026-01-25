@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"sort"
 	"text/template"
 
 	"simplemath/gen"
@@ -95,6 +96,14 @@ func (h *SubmitHandler) generate(f *FormData) []Item {
 			min := int(math.Pow10(digit - 1))
 			max := int(math.Pow10(digit)) - 1
 			ops[i] = gen.Random(min, max)
+		}
+
+		// if subtraction or division, ensure the first operand is the largest
+		if f.Operator == operator.Subtraction.String() || f.Operator == operator.Division.String() {
+			// sort operands in descending order
+			sort.Slice(ops, func(i, j int) bool {
+				return ops[i] > ops[j]
+			})
 		}
 		problem := gen.JoinOperands(ops, sym)
 		if !seen[problem] {

@@ -8,7 +8,7 @@
   translation: Create Math Exercise
 
 - id: header.result
-  translation: Addition Exercise
+  translation: Math Exercise
 
 - id: label.operator
   translation: Select Operation
